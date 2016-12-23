@@ -1,8 +1,8 @@
 const path = require('path');
 
-let srcPath = path.resolve(__dirname, '../src');
+const srcPath = path.resolve(__dirname, '../src');
 
-let rootPath = path.resolve(__dirname, '../');
+const rootPath = path.resolve(__dirname, '../');
 
 module.exports = {
     resolveFromSrc : function (p) {

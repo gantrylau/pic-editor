@@ -1,10 +1,10 @@
-let webpack    = require('webpack'),
-    merge      = require('webpack-merge'),
-    helper     = require('./helper'),
-    baseConfig = require('./webpack.common.config');
+const webpack    = require('webpack'),
+      merge      = require('webpack-merge'),
+      helper     = require('./helper'),
+      baseConfig = require('./webpack.common.config');
 
-let publicPath          = 'http://localhost:3000/';
-let hotMiddlewareScript = 'webpack-hot-middleware/client?reload=true';
+const publicPath          = 'http://localhost:3000/';
+const hotMiddlewareScript = 'webpack-hot-middleware/client?reload=true';
 
 module.exports = merge(baseConfig, {
     entry : {
