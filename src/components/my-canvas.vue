@@ -4,91 +4,100 @@
 <script>
     import {mapState} from 'vuex'
     import {mapMutations} from 'vuex'
+    import './ctrl-shape'
 
     export default {
-        data    : {
-            mouseDowned: false,
-            canvasState: null
+        data() {
+            return {
+                lastPoint: {
+                    x: null,
+                    y: null
+                },
+                mouseDowned: false
+            }
         },
-        mounted : function () {
-            let self = this;
+        mounted: function () {
 
-            this.canvasState = new createjs.Stage("myCanvas");
+            this.createStage('myCanvas');
 
-            this.canvasState.addEventListener('stagemouseup', function () {
-                self.mouseDowned = false;
-            });
+            let preload = new createjs.LoadQueue(false);
 
-            this.canvasState.addEventListener('stagemousemove', function(event) {
-                if (self.currentItem && self.mouseDowned) {
-                    let x       = event.stageX;
-                    let y       = event.stageY;
-                    let offsetX = x - self.lastPoint.x;
-                    let offsetY = y - self.lastPoint.y;
-                    console.log(offsetX, offsetY);
-                    self.updateLastPoint({x: x, y: y});
-                    self.currentItem.x += offsetX;
-                    self.currentItem.y += offsetY;
-                    self.canvasState.update();
-                }
-            });
+            preload.addEventListener("complete", this.loadCompleted);
+            preload.loadFile({id: 'test', src: 'http://cdn-img.easyicon.net/png/5342/534223.gif'});
 
-            let circle = new createjs.Shape();
-            circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 50);
-            circle.x = 100;
-            circle.y = 100;
-            this.initEventListener(circle);
-            this.canvasState.addChild(circle);
-            this.children.push(circle);
 
-            let circle2 = new createjs.Shape();
-            circle2.graphics.beginFill("red").drawCircle(0, 0, 50);
-            circle2.x = 200;
-            circle2.y = 200;
-            this.initEventListener(circle2);
+//            let container = new createjs.Container();
 
-            this.canvasState.addChild(circle2);
-            this.children.push(circle2);
+//            let border = new createjs.Shape();
+//            border.graphics.beginStroke('gray').drawRect(0, 0, 100, 100);
 
-            this.canvasState.update();
+//            container.addChild(border);
+
+            let circle = new createjs.CtrlShape();
+            circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 100).endFill();
+//            circle.setBounds(100, 100, 100, 100);
+            circle.width = circle.height = 200;
+            circle.x = 200;
+            circle.y = 200;
+            circle.showCtrl();
+//            this.initEventListener(circle);
+//            this.initEventListener(container);
+//            container.addChild(circle);
+//            circle.x = 200;
+//            circle.y = 200;
+//            this.stage.addChild(container);
+//            this.children.push(container);
+
+//            let circleFrame = new createjs.CtrlFrame(circle);
+            this.stage.addChild(circle);
+//            this.stage.addChild(circleFrame);
+
+//            let circle2 = new createjs.Shape();
+//            circle2.graphics.beginFill("red").drawCircle(0, 0, 50);
+//            circle2.x = 100;
+//            circle2.y = 100;
+//            this.initEventListener(circle2);
+//
+//            this.stage.addChild(circle2);
+//            this.children.push(circle2);
+
+            this.stage.update();
         },
         computed: mapState({
-            children   : state => state.myCanvas.children,
-            lastPoint  : state => state.myCanvas.lastPoint,
-            draging    : state => state.myCanvas.draging,
+            stage: state => state.myCanvas.stage,
+            children: state => state.myCanvas.children,
             currentItem: state => state.myCanvas.currentItem
         }),
-        methods : {
+        methods: {
             ...mapMutations([
-                'startDrag', 'stopDrag', 'updateLastPoint', 'updateCurrentItem'
+                'createStage', 'startDrag', 'stopDrag', 'updateLastPoint', 'updateCurrentItem'
             ]),
+            loadCompleted: function (event) {
+                let img = event.target.getResult('test');
+                let road = new createjs.Shape();
+//                road.graphics.beginBitmapFill(img).drawRect(0, 0, 100, 100);
+//                this.stage.addChild(road);
+//                this.stage.update();
+            },
             initEventListener: function (obj) {
                 let self = this;
                 obj.addEventListener('mousedown', function (event) {
-                    self.updateLastPoint({x: event.stageX, y: event.stageY});
+                    self.lastPoint.x = event.stageX;
+                    self.lastPoint.y = event.stageY;
+                    console.log(obj);
                     self.updateCurrentItem(obj);
-                    self.mouseDowned = true;
                 });
-            },
-            canvasMouseUp    : function (event) {
-                this.stopDrag();
-            },
-            canvasMouseDown  : function (event) {
-                this.updateLastPoint({x: event.screenX, y: event.screenY});
-//                this.startDrag();
-            },
-            canvasMouseMove  : function (event) {
-                console.log(this.currentItem);
-                if (this.currentItem && this.mouseDowned) {
-                    let x       = event.screenX;
-                    let y       = event.screenY;
-                    let offsetX = x - this.lastPoint.x;
-                    let offsetY = y - this.lastPoint.y;
-                    this.updateLastPoint({x: x, y: y});
-                    this.currentItem.x += offsetX;
-                    this.currentItem.y += offsetY;
-                    this.canvasState.update();
-                }
+                obj.addEventListener('pressmove', function (event) {
+                    let x = event.stageX;
+                    let y = event.stageY;
+                    let offsetX = x - self.lastPoint.x;
+                    let offsetY = y - self.lastPoint.y;
+                    self.lastPoint.x = x;
+                    self.lastPoint.y = y;
+                    obj.x += offsetX;
+                    obj.y += offsetY;
+                    self.stage.update();
+                });
             }
         }
     }
