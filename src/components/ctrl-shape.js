@@ -16,31 +16,40 @@
         }
 
         showCtrl() {
+            this._graphics = this.graphics.clone();
             this.updateCircles();
             this.drawCircles();
         }
 
-        update(x, y) {
+        hideCtrl() {
+            this.graphics = this._graphics;
+        }
 
-            if (x == undefined || this.state == "still") {
-                // this.updateBindedOject();
+        update(x, y) {
+            if (x == undefined || this.state == 'still') {
+                this.updateSelf();
                 return;
             }
 
-            if (this.state == "translate") {
+            if (this.state == 'translate') {
                 this.x = x - this.dx;
                 this.y = y - this.dy;
             } else {
                 this.dx = x - this.x;
                 this.dy = y - this.y;
-                if (this.state == "scale") {
+                if (this.state == 'scale') {
                     this.scale();
                 } else {
                     this.rotate();
                 }
             }
-            // this.updateBindedOject();
+            this.updateSelf();
         };
+
+        updateSelf() {
+            this.scaleX = this.sx;
+            this.scaleY = this.sy;
+        }
 
         updateCircles() {
             let row, col, halfW, halfH;
@@ -65,6 +74,9 @@
         drawCircles() {
             let circle = null;
             let circles = this.circles;
+
+            this.graphics.clear();
+            this.graphics = this._graphics.clone();
 
             let graphics = this.graphics;
 

@@ -40,13 +40,7 @@
             circle.x = 200;
             circle.y = 200;
             circle.showCtrl();
-//            this.initEventListener(circle);
-//            this.initEventListener(container);
-//            container.addChild(circle);
-//            circle.x = 200;
-//            circle.y = 200;
-//            this.stage.addChild(container);
-//            this.children.push(container);
+            this.initEventListener(circle);
 
 //            let circleFrame = new createjs.CtrlFrame(circle);
             this.stage.addChild(circle);
@@ -84,18 +78,22 @@
                 obj.addEventListener('mousedown', function (event) {
                     self.lastPoint.x = event.stageX;
                     self.lastPoint.y = event.stageY;
-                    console.log(obj);
                     self.updateCurrentItem(obj);
+
+//                    obj.hideCtrl();
+//                    self.stage.update();
                 });
                 obj.addEventListener('pressmove', function (event) {
                     let x = event.stageX;
                     let y = event.stageY;
-                    let offsetX = x - self.lastPoint.x;
-                    let offsetY = y - self.lastPoint.y;
-                    self.lastPoint.x = x;
-                    self.lastPoint.y = y;
-                    obj.x += offsetX;
-                    obj.y += offsetY;
+                    obj.update && obj.update(x, y);
+
+//                    let offsetX = x - self.lastPoint.x;
+//                    let offsetY = y - self.lastPoint.y;
+//                    self.lastPoint.x = x;
+//                    self.lastPoint.y = y;
+//                    obj.x += offsetX;
+//                    obj.y += offsetY;
                     self.stage.update();
                 });
             }
