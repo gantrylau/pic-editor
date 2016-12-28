@@ -9,69 +9,49 @@
     export default {
         data() {
             return {
-                lastPoint: {
+                lastPoint  : {
                     x: null,
                     y: null
                 },
                 mouseDowned: false
             }
         },
-        mounted: function () {
+        mounted : function () {
 
             this.createStage('myCanvas');
 
-            let preload = new createjs.LoadQueue(false);
+            let preload = new createjs.LoadQueue(true, null, true);
 
-            preload.addEventListener("complete", this.loadCompleted);
-            preload.loadFile({id: 'test', src: 'http://cdn-img.easyicon.net/png/5342/534223.gif'});
+//            preload.addEventListener("complete", this.loadCompleted);
+//            preload.loadFile({id: 'test', src: 'http://cdn-img.easyicon.net/png/5342/534223.gif'});
 
-
-//            let container = new createjs.Container();
-
-//            let border = new createjs.Shape();
-//            border.graphics.beginStroke('gray').drawRect(0, 0, 100, 100);
-
-//            container.addChild(border);
-
-            let circle = new createjs.CtrlShape();
-            circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 100).endFill();
-//            circle.setBounds(100, 100, 100, 100);
-            circle.width = circle.height = 200;
-            circle.x = 200;
-            circle.y = 200;
-            circle.showCtrl();
-            this.initEventListener(circle);
-
-//            let circleFrame = new createjs.CtrlFrame(circle);
-            this.stage.addChild(circle);
-//            this.stage.addChild(circleFrame);
-
-//            let circle2 = new createjs.Shape();
-//            circle2.graphics.beginFill("red").drawCircle(0, 0, 50);
-//            circle2.x = 100;
-//            circle2.y = 100;
-//            this.initEventListener(circle2);
-//
-//            this.stage.addChild(circle2);
-//            this.children.push(circle2);
+            let loadItem = new createjs.LoadItem().set({src: "http://cdn-img.easyicon.net/png/5342/534223.gif", crossOrigin: true});
+//            let circle = new createjs.CtrlShape();
+//            circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 100).endFill();
+//            circle.width = circle.height = 200;
+//            circle.x = 200;
+//            circle.y = 200;
+//            circle.showCtrl();
+//            this.initEventListener(circle);
+//            this.stage.addChild(circle);
 
             this.stage.update();
         },
         computed: mapState({
-            stage: state => state.myCanvas.stage,
-            children: state => state.myCanvas.children,
+            stage      : state => state.myCanvas.stage,
+            children   : state => state.myCanvas.children,
             currentItem: state => state.myCanvas.currentItem
         }),
-        methods: {
+        methods : {
             ...mapMutations([
                 'createStage', 'startDrag', 'stopDrag', 'updateLastPoint', 'updateCurrentItem'
             ]),
-            loadCompleted: function (event) {
-                let img = event.target.getResult('test');
-                let road = new createjs.Shape();
-//                road.graphics.beginBitmapFill(img).drawRect(0, 0, 100, 100);
-//                this.stage.addChild(road);
-//                this.stage.update();
+            loadCompleted    : function (event) {
+                let img      = event.target.getResult('test');
+                let imgShape = new createjs.CtrlShape();
+                imgShape.graphics.beginBitmapFill(img).drawRect(0, 0, 100, 100);
+                this.stage.addChild(imgShape);
+                this.stage.update();
             },
             initEventListener: function (obj) {
                 let self = this;

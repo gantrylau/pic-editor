@@ -1,4 +1,6 @@
 ;(function () {
+    const circleR = 5;
+
     class CtrlShape extends createjs.Shape {
         constructor() {
             super();
@@ -60,8 +62,8 @@
             halfH = (this.height >> 1) * this.sy;
 
             for (let i = 0; i < 9; i++) {
-                row = Math.floor(i / 3);
-                col = Math.floor(i % 3);
+                row        = Math.floor(i / 3);
+                col        = Math.floor(i % 3);
                 circles[i] = new createjs.Point((col - 1) * halfW, (row - 1) * halfH);
             }
 
@@ -72,7 +74,7 @@
         }
 
         drawCircles() {
-            let circle = null;
+            let circle  = null;
             let circles = this.circles;
 
             this.graphics.clear();
@@ -86,8 +88,7 @@
 
             for (let i = 0; i < this.circles.length; i++) {
                 circle = circles[i];
-                console.log(circle);
-                graphics.beginFill('white').drawCircle(circle.x, circle.y, 5).endFill();
+                graphics.beginFill('white').drawCircle(circle.x, circle.y, circleR).endFill();
 
             }
             graphics.endStroke();
@@ -102,7 +103,7 @@
             let dx = this.dx * Math.cos(-theta) - this.dy * Math.sin(-theta);
             let dy = this.dx * Math.sin(-theta) + this.dy * Math.cos(-theta);
 
-            if (Math.abs(dx) > (this.width >> 1) * Math.abs(this.sx) + 10 || Math.abs(dy) > (this.height >> 1) * Math.abs(this.sy) + 10) {
+            if (Math.abs(dx) > (this.width >> 1) * Math.abs(this.sx) + circleR || Math.abs(dy) > (this.height >> 1) * Math.abs(this.sy) + circleR) {
                 this.activeIndex = -1;
             } else {
                 this.activeIndex = 4;
@@ -110,7 +111,7 @@
                     if (i == 4) {
                         continue;
                     }
-                    if (Math.abs(dx - circles[i].x) < 10 && Math.abs(dy - circles[i].y) < 10) {
+                    if (Math.abs(dx - circles[i].x) < circleR && Math.abs(dy - circles[i].y) < circleR) {
                         this.activeIndex = i;
                         break;
                     }
@@ -123,7 +124,29 @@
             this.dx = x - this.x;
             this.dy = y - this.y;
 
-            this.decideActiveIndex();
+            console.log(this.dx, this.dy);
+
+            let circles = this.circles;
+
+            let theta = this.rotation * Math.PI / 180;
+
+            let dx = this.dx * Math.cos(-theta) - this.dy * Math.sin(-theta);
+            let dy = this.dx * Math.sin(-theta) + this.dy * Math.cos(-theta);
+
+            if (Math.abs(dx) > (this.width >> 1) * Math.abs(this.sx) + circleR || Math.abs(dy) > (this.height >> 1) * Math.abs(this.sy) + circleR) {
+                this.activeIndex = -1;
+            } else {
+                this.activeIndex = 4;
+                for (let i = 0; i < 9; i++) {
+                    if (i == 4) {
+                        continue;
+                    }
+                    if (Math.abs(dx - circles[i].x) < circleR && Math.abs(dy - circles[i].y) < circleR) {
+                        this.activeIndex = i;
+                        break;
+                    }
+                }
+            }
 
             switch (this.activeIndex) {
 
@@ -159,14 +182,14 @@
             let col = Math.floor(this.activeIndex % 3);
 
             let theta = this.rotation * Math.PI / 180;
-            let cos = Math.cos(-theta);
-            let sin = Math.sin(-theta);
-
+            let cos   = Math.cos(-theta);
+            let sin   = Math.sin(-theta);
+            console.log(cos, sin);
             let dx = this.dx * cos - this.dy * sin;
             let dy = this.dx * sin + this.dy * cos;
 
             if (col != 1) {
-                this.sx = dx * (col - 1) / (this.width >> 1);
+                this.sx = (dx * (col - 1) / (this.width >> 1));
             }
 
             if (row != 1) {
@@ -185,7 +208,7 @@
             } else {
                 delta = Math.PI * (this.sx < 0 ? 0 : 1);
             }
-            let theta = Math.atan2(this.dy, this.dx) + delta;
+            let theta     = Math.atan2(this.dy, this.dx) + delta;
             this.rotation = theta * 180 / Math.PI;
         };
 
