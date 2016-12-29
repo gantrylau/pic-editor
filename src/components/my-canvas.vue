@@ -4,7 +4,7 @@
 <script>
     import {mapState} from 'vuex'
     import {mapMutations} from 'vuex'
-    import './ctrl-shape'
+    import './ctrl-frame'
 
     export default {
         data() {
@@ -22,10 +22,9 @@
 
             let preload = new createjs.LoadQueue(true, null, true);
 
-//            preload.addEventListener("complete", this.loadCompleted);
-//            preload.loadFile({id: 'test', src: 'http://cdn-img.easyicon.net/png/5342/534223.gif'});
+            preload.addEventListener("complete", this.loadCompleted);
+            preload.loadFile({id: 'car', src: 'https://img.alicdn.com/imgextra/i4/92779311/TB2acZqXHplpuFjSspiXXcdfFXa-92779311.png'});
 
-            let loadItem = new createjs.LoadItem().set({src: "http://cdn-img.easyicon.net/png/5342/534223.gif", crossOrigin: true});
 //            let circle = new createjs.CtrlShape();
 //            circle.graphics.beginFill("DeepSkyBlue").drawCircle(0, 0, 100).endFill();
 //            circle.width = circle.height = 200;
@@ -47,18 +46,31 @@
                 'createStage', 'startDrag', 'stopDrag', 'updateLastPoint', 'updateCurrentItem'
             ]),
             loadCompleted    : function (event) {
-                let img      = event.target.getResult('test');
-                let imgShape = new createjs.CtrlShape();
-                imgShape.graphics.beginBitmapFill(img).drawRect(0, 0, 100, 100);
-                this.stage.addChild(imgShape);
+                let img      = event.target.getResult('car');
+                let w        = img.naturalWidth;
+                let h        = img.naturalHeight;
+                let imgShape = new createjs.Shape();
+                imgShape.graphics.beginBitmapFill(img).drawRect(0, 0, w, h).endFill();
+                imgShape.setBounds(0, 0, w, h);
+                let container = new createjs.CtrlFrame(imgShape);
+                container.x = 200;
+                container.y = 200;
+                let self = this;
+                container.addEventListener('pressmove', function (event) {
+                    let x = event.stageX;
+                    let y = event.stageY;
+                    container.update && container.update(x, y);
+                    self.stage.update();
+                });
+                this.stage.addChild(container);
                 this.stage.update();
             },
             initEventListener: function (obj) {
                 let self = this;
                 obj.addEventListener('mousedown', function (event) {
-                    self.lastPoint.x = event.stageX;
-                    self.lastPoint.y = event.stageY;
-                    self.updateCurrentItem(obj);
+//                    self.lastPoint.x = event.stageX;
+//                    self.lastPoint.y = event.stageY;
+//                    self.updateCurrentItem(obj);
 
 //                    obj.hideCtrl();
 //                    self.stage.update();
@@ -67,13 +79,6 @@
                     let x = event.stageX;
                     let y = event.stageY;
                     obj.update && obj.update(x, y);
-
-//                    let offsetX = x - self.lastPoint.x;
-//                    let offsetY = y - self.lastPoint.y;
-//                    self.lastPoint.x = x;
-//                    self.lastPoint.y = y;
-//                    obj.x += offsetX;
-//                    obj.y += offsetY;
                     self.stage.update();
                 });
             }
