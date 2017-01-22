@@ -85,7 +85,6 @@
             let circle = null;
             for (let i = 0; i < this.circles.length; i++) {
                 circle = circles[i];
-                console.log(circle);
                 graphics.beginFill('white').drawCircle(circle.x, circle.y, circleSize).endFill();
             }
             graphics.endStroke();
