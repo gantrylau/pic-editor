@@ -53,8 +53,8 @@
                 imgShape.graphics.beginBitmapFill(img).drawRect(0, 0, w, h).endFill();
                 imgShape.setBounds(0, 0, w, h);
                 let container = new createjs.CtrlFrame(imgShape);
-                container.x = 200;
-                container.y = 200;
+                container.x = 300;
+                container.y = 300;
                 let self = this;
                 container.addEventListener('pressmove', function (event) {
                     let x = event.stageX;
